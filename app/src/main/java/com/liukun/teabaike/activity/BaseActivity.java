@@ -1,4 +1,4 @@
-package com.liukun.teabaike.com.liukun.teabaike.activity;
+package com.liukun.teabaike.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
