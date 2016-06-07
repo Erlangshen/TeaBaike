@@ -162,21 +162,22 @@ public class MainActivity extends BaseActivity implements
         }
         switch (position) {
             case 0:
-                // 模拟真实点击事件，相当于直接点击了头条
+                // 模拟真实点击事件，相当于直接点击了头条（用teaRg.check（R.id.toutiao也可以但是滑动时会导致其他按钮被选中））
                 toutiao.performClick();
                 break;
             case 1:
-                // 让RadioGroup选中百科
-                teaRg.check(R.id.baike);
+                baike.performClick();
                 break;
+
             case 2:
-                teaRg.check(R.id.zixun);
+                zixun.performClick();
                 break;
+
             case 3:
-                teaRg.check(R.id.jingying);
+                jingying.performClick();
                 break;
             case 4:
-                teaRg.check(R.id.shuju);
+                shuju.performClick();
                 break;
             case 5:
                 toMoreActivity();
@@ -196,6 +197,7 @@ public class MainActivity extends BaseActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 666 && teaVp.getCurrentItem() == 5) {
             teaVp.setCurrentItem(4);
+            Log.e("","position:"+teaVp.getCurrentItem());
             View view = slide.getChildAt(4);
             View preView = slide.getChildAt(3);
             view.setBackgroundColor(0xFF3D9D01);
