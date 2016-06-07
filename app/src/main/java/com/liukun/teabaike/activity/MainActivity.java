@@ -195,7 +195,12 @@ public class MainActivity extends BaseActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 666 && teaVp.getCurrentItem() == 5) {
-            shuju.performClick();
+            teaVp.setCurrentItem(4);
+            View view = slide.getChildAt(4);
+            View preView = slide.getChildAt(3);
+            view.setBackgroundColor(0xFF3D9D01);
+            preView.setBackgroundColor(0xFFEBEBEB);
+            prePosition = 4;
         }
     }
 
