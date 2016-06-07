@@ -18,7 +18,8 @@
             android:id="@+id/toutiao"
             style="@style/RadioButton"
             android:textColor="#3D9D01"
-            android:text="头条" />
+            android:text="头条"
+            android:checked="false" />
 
         <RadioButton
             android:id="@+id/baike"
