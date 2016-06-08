@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.liukun.teabaike.R;
+import com.liukun.teabaike.TeaApplication;
 import com.liukun.teabaike.bean.Tea;
 import com.liukun.teabaike.utils.ImageDownLoader;
 
@@ -28,7 +29,7 @@ public class ContentAdapter extends BaseAdapter {
 		super();
 		this.con = con;
 		this.teaList = teaList;
-		loader=new ImageDownLoader(con);
+		loader= TeaApplication.getApp().getLoaderInstance();
 	}
 
 	// listview有多少条数据
