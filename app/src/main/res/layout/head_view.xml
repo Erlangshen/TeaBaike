@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/headVp"
+        android:layout_width="match_parent"
+        android:layout_height="145dp"/>
+    <RelativeLayout
+        android:id="@+id/headRelative"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="#676767"
+        android:layout_alignBottom="@+id/headVp">
+        <TextView
+            android:id="@+id/headTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:text="android1.3新版本简介"
+            android:layout_centerVertical="true"/>
+        <LinearLayout
+            android:id="@+id/headLinear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:orientation="horizontal"
+            >
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

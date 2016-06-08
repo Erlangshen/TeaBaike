@@ -3,8 +3,35 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="#EBEBEB">
+            <Button
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:onClick="more_back"
+                android:background="@drawable/searchbackbtn"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="茶百科"
+                android:textSize="20sp"
+                android:layout_centerInParent="true"
+                android:textColor="#979797"/>
+            android:background="#EBEBEB">
+            <Button
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:onClick="more_home"
+                android:background="@drawable/righttopbutton"/>
+        </RelativeLayout>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="more" />
+        android:layout_height="2dp"
+        android:orientation="vertical"
+        android:background="#3D9D01"></LinearLayout>
 </LinearLayout>
