@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 
 import com.liukun.teabaike.R;
 import com.liukun.teabaike.TeaApplication;
+import com.liukun.teabaike.activity.TeaDetailsActivity;
 import com.liukun.teabaike.adapter.ContentAdapter;
 import com.liukun.teabaike.adapter.GuideAdapter;
 import com.liukun.teabaike.bean.Advert;
@@ -35,7 +38,7 @@ import com.liukun.teabaike.interfaces.AsyncTaskCallBack;
 import com.liukun.teabaike.utils.ImageDownLoader;
 
 @SuppressLint("ValidFragment")
-public class ContentFragment extends BaseFragment {
+public class ContentFragment extends BaseFragment{
     private String url;
     private int flag;
     private String dataUrl = "";
@@ -108,7 +111,16 @@ public class ContentFragment extends BaseFragment {
 
             }
         }).execute();
+        fListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i=new Intent(getActivity(), TeaDetailsActivity.class);
+                i.putExtra("id", tList.get(position).getId());
+                startActivity(i);
+            }
+        });
     }
+
 
     /**
      * 加载listview的headview
@@ -242,5 +254,4 @@ public class ContentFragment extends BaseFragment {
                 break;
         }
     }
-
 }
