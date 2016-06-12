@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity implements
         }
         switch (position) {
             case 0:
-                // 模拟真实点击事件，相当于直接点击了头条（用teaRg.check（R.id.toutiao也可以但是滑动时会导致其他按钮被选中））
+                // 模拟真实点击事件，相当于直接点击了头条（用teaRg.check（R.id.toutiao） 也可以但是滑动时会导致其他按钮被选中）
                 toutiao.performClick();
                 break;
             case 1:
