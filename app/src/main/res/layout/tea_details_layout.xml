@@ -38,7 +38,7 @@
                     android:padding="3dp">
 
                     <TextView
-                        android:id="@+id/detailsAuther"
+                        android:id="@+id/detailsAuthor"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="#FFFFFF"
@@ -68,18 +68,21 @@
         android:orientation="horizontal">
 
         <Button
+            android:id="@+id/contentback"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/contentback" />
 
         <Button
+            android:id="@+id/contentshare"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/contentshare" />
 
         <Button
+            android:id="@+id/collectcontent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
