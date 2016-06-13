@@ -115,7 +115,13 @@ public class ContentFragment extends BaseFragment{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i=new Intent(getActivity(), TeaDetailsActivity.class);
+                Tea tea=new Tea();
+                tea=tList.get(position);
                 i.putExtra("id", tList.get(position).getId());
+                if (flag==0){
+                    tea = (Tea) parent.getAdapter().getItem(position);
+                }
+                i.putExtra("id",tea.getId());
                 startActivity(i);
             }
         });

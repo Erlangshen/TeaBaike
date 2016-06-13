@@ -1,6 +1,9 @@
 package com.liukun.teabaike.activity;
 
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebView;
@@ -17,6 +20,9 @@ import com.liukun.teabaike.interfaces.AsyncTaskCallBack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * 详情页面
  */
@@ -26,6 +32,17 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
     private TextView detailsTitle, detailsAuthor, detailsTime;
     private WebView detailsWeb;
     private Button contentback, contentshare, collectcontent;
+    private ProgressDialog dialog;
+    private Timer timer;
+    private Handler handler=new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (dialog.isShowing()){
+                dialog.dismiss();
+            }
+        }
+    };
 
     @Override
     protected int getLayoutId() {
@@ -49,6 +66,9 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void initData() {
         dataUrl = AppConstant.CONTENT + "&id=" + getIntent().getStringExtra("id");
+        dialog=new ProgressDialog(TeaDetailsActivity.this);
+        dialog.setMessage("正在请求数据...");
+        dialog.show();
         new RequestAsyncTask(TeaDetailsActivity.this, dataUrl, new AsyncTaskCallBack() {
             @Override
             public void post(String rest) {
@@ -82,7 +102,12 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
 
     private void initWebView() {
         detailsWeb.getSettings().setJavaScriptEnabled(true);
-
+        detailsWeb.getSettings().setDomStorageEnabled(true);
+        detailsWeb.getSettings().setAppCacheEnabled(false);
+        detailsWeb.getSettings().setDefaultTextEncodingName("gb2312");
+        detailsWeb.setWebViewClient(new TeaWebViewClient());
+        detailsWeb.loadUrl(details.getWeiboUrl());
+        detailsWeb.requestFocus();
     }
 
     @Override
@@ -101,10 +126,25 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
+            timer=new Timer();
+            TimerTask task=new TimerTask() {
+                @Override
+                public void run() {
+                    if (dialog.isShowing()){
+                        handler.sendEmptyMessage(0);
+                        timer.cancel();
+                        timer.purge();
+                    }
+                }
+            };
+            timer.schedule(task,100000);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
+            if (dialog!=null&&dialog.isShowing()){
+                dialog.dismiss();
+            }
             super.onPageFinished(view, url);
         }
     }
