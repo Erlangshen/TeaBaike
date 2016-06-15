@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
@@ -102,12 +103,10 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
 
     private void initWebView() {
         detailsWeb.getSettings().setJavaScriptEnabled(true);
-        detailsWeb.getSettings().setDomStorageEnabled(true);
-        detailsWeb.getSettings().setAppCacheEnabled(false);
-        detailsWeb.getSettings().setDefaultTextEncodingName("gb2312");
         detailsWeb.setWebViewClient(new TeaWebViewClient());
-        detailsWeb.loadUrl(details.getWeiboUrl());
-        detailsWeb.requestFocus();
+        //控制图片不超出屏幕范围
+        detailsWeb.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+        detailsWeb.loadDataWithBaseURL(null,details.getWap_content(),"text/html","utf-8",null);
     }
 
     @Override
