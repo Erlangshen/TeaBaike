@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 下拉刷新和上拉加载更多的文本 -->
+    <string name="pull_to_refresh_header_hint_normal">下拉刷新</string>
+    <string name="pull_to_refresh_header_hint_ready">松开刷新</string>
+    <string name="pull_to_refresh_header_hint_loading">正在刷新…</string>
+    <string name="pull_to_refresh_header_last_time">最近更新:</string>
+    <string name="pull_to_load_footer_hint_ready">松开加载更多</string>
+    <string name="pull_to_load_footer_hint_normal">上拉加载更多</string>
+    <string name="pull_to_load_footer_hint_loading">正在加载…</string>
+    <string name="pull_to_load_no_more_data">加载完毕</string>
+
+</resources>
