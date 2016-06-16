@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.liukun.teabaike.R;
@@ -35,15 +37,16 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
     private Button contentback, contentshare, collectcontent;
     private ProgressDialog dialog;
     private Timer timer;
-    private Handler handler=new Handler() {
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (dialog.isShowing()){
+            if (dialog.isShowing()) {
                 dialog.dismiss();
             }
         }
     };
+    private ScrollView scroll;
 
     @Override
     protected int getLayoutId() {
@@ -59,6 +62,8 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
         contentback = (Button) findViewById(R.id.contentback);
         contentshare = (Button) findViewById(R.id.contentshare);
         collectcontent = (Button) findViewById(R.id.collectcontent);
+        scroll= (ScrollView) findViewById(R.id.scroll);
+
         contentback.setOnClickListener(this);
         contentshare.setOnClickListener(this);
         collectcontent.setOnClickListener(this);
@@ -67,7 +72,7 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
     @Override
     protected void initData() {
         dataUrl = AppConstant.CONTENT + "&id=" + getIntent().getStringExtra("id");
-        dialog=new ProgressDialog(TeaDetailsActivity.this);
+        dialog = new ProgressDialog(TeaDetailsActivity.this);
         dialog.setMessage("正在请求数据...");
         dialog.show();
         new RequestAsyncTask(TeaDetailsActivity.this, dataUrl, new AsyncTaskCallBack() {
@@ -103,10 +108,22 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
 
     private void initWebView() {
         detailsWeb.getSettings().setJavaScriptEnabled(true);
+        detailsWeb.loadDataWithBaseURL(null, details.getWap_content(), "text/html", "utf-8", null);
         detailsWeb.setWebViewClient(new TeaWebViewClient());
         //控制图片不超出屏幕范围
         detailsWeb.getSettings().setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-        detailsWeb.loadDataWithBaseURL(null,details.getWap_content(),"text/html","utf-8",null);
+//        detailsWeb.getSettings().setUseWideViewPort(true);
+//        detailsWeb.getSettings().setLoadWithOverviewMode(true);
+        detailsWeb.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP)
+                    scroll.requestDisallowInterceptTouchEvent(false);
+                else
+                    scroll.requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
     }
 
     @Override
@@ -121,27 +138,28 @@ public class TeaDetailsActivity extends BaseActivity implements View.OnClickList
                 break;
         }
     }
-    class TeaWebViewClient extends WebViewClient{
+
+    class TeaWebViewClient extends WebViewClient {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             super.onPageStarted(view, url, favicon);
-            timer=new Timer();
-            TimerTask task=new TimerTask() {
+            timer = new Timer();
+            TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    if (dialog.isShowing()){
+                    if (dialog.isShowing()) {
                         handler.sendEmptyMessage(0);
                         timer.cancel();
                         timer.purge();
                     }
                 }
             };
-            timer.schedule(task,100000);
+            timer.schedule(task, 100000);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if (dialog!=null&&dialog.isShowing()){
+            if (dialog != null && dialog.isShowing()) {
                 dialog.dismiss();
             }
             super.onPageFinished(view, url);

@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -28,18 +29,19 @@ import android.widget.TextView;
 
 import com.liukun.teabaike.R;
 import com.liukun.teabaike.TeaApplication;
+import com.liukun.teabaike.activity.MainActivity;
 import com.liukun.teabaike.activity.TeaDetailsActivity;
 import com.liukun.teabaike.adapter.ContentAdapter;
 import com.liukun.teabaike.adapter.GuideAdapter;
 import com.liukun.teabaike.bean.Advert;
 import com.liukun.teabaike.bean.Tea;
 import com.liukun.teabaike.http.RequestAsyncTask;
+import com.liukun.teabaike.interfaces.AdvertCallBack;
 import com.liukun.teabaike.interfaces.AsyncTaskCallBack;
 import com.liukun.teabaike.utils.ImageDownLoader;
-import com.llb.util.PullToRefreshListView;
 
 @SuppressLint("ValidFragment")
-public class ContentFragment extends BaseFragment{
+public class ContentFragment extends BaseFragment implements AdvertCallBack{
     private String url;
     private int flag;
     private String dataUrl = "";
@@ -65,7 +67,6 @@ public class ContentFragment extends BaseFragment{
         this.url = url;
         this.flag = flag;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -183,7 +184,7 @@ public class ContentFragment extends BaseFragment{
                                 headList.add(image);
                                 textList.add(ad.getTitle());
                             }
-                            headVp.setAdapter(new GuideAdapter(headList));
+                            headVp.setAdapter(new GuideAdapter(headList,ContentFragment.this,1));
                         } else {
                             showToast("数据请求失败");
                         }
@@ -260,5 +261,12 @@ public class ContentFragment extends BaseFragment{
             default:
                 break;
         }
+    }
+
+    @Override
+    public void callBack(int position) {
+        Intent intent=new Intent(getActivity(),TeaDetailsActivity.class);
+        intent.putExtra("id",adList.get(position).getId());
+        startActivity(intent);
     }
 }
