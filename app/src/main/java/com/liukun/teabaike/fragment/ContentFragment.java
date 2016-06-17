@@ -27,6 +27,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.liukun.teabaike.R;
 import com.liukun.teabaike.TeaApplication;
 import com.liukun.teabaike.activity.MainActivity;
@@ -41,13 +43,13 @@ import com.liukun.teabaike.interfaces.AsyncTaskCallBack;
 import com.liukun.teabaike.utils.ImageDownLoader;
 
 @SuppressLint("ValidFragment")
-public class ContentFragment extends BaseFragment implements AdvertCallBack{
+public class ContentFragment extends BaseFragment implements AdvertCallBack,PullToRefreshBase.OnRefreshListener2<ListView>{
     private String url;
     private int flag;
     private String dataUrl = "";
     private String headUrl = "";
     private List<Tea> tList;
-    private ListView fListView;
+    private PullToRefreshListView fListView;
     //广告数据集合
     private List<Advert> adList;
     //广告imageview集合
@@ -59,6 +61,7 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack{
     //广告文字内容
     private List<String> textList;
     private int prePosition=0;
+    private ListView listView;
 
     public ContentFragment() {
     }
@@ -80,15 +83,19 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack{
 
     @Override
     protected void initView(View v) {
-        fListView = (ListView) v.findViewById(R.id.fListView);
+        fListView = (PullToRefreshListView) v.findViewById(R.id.fListView);
+        fListView.setOnRefreshListener(ContentFragment.this);
+        fListView.setMode(PullToRefreshBase.Mode.BOTH);
+        listView=fListView.getRefreshableView();
     }
 
     @Override
     protected void initData() {
         getUrl();
         if (flag == 0) {
-            fListView.addHeaderView(getHeadView());
+            listView.addHeaderView(getHeadView());
         }
+        registerForContextMenu(listView);
         new RequestAsyncTask(getActivity(), dataUrl, new AsyncTaskCallBack() {
 
             @Override
@@ -102,7 +109,7 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack{
                         if ("success".equals(msg)) {
                             JSONArray array = obj.getJSONArray("data");
                             tList = com.alibaba.fastjson.JSONArray.parseArray(array.toString(), Tea.class);
-                            fListView.setAdapter(new ContentAdapter(getActivity(), tList));
+                            listView.setAdapter(new ContentAdapter(getActivity(), tList));
                         } else {
                             showToast("数据请求失败");
                         }
@@ -113,7 +120,7 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack{
 
             }
         }).execute();
-        fListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i=new Intent(getActivity(), TeaDetailsActivity.class);
@@ -268,5 +275,15 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack{
         Intent intent=new Intent(getActivity(),TeaDetailsActivity.class);
         intent.putExtra("id",adList.get(position).getId());
         startActivity(intent);
+    }
+
+    @Override
+    public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+
+    }
+
+    @Override
+    public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+
     }
 }
