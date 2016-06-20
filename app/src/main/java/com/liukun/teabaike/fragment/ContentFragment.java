@@ -43,12 +43,13 @@ import com.liukun.teabaike.interfaces.AsyncTaskCallBack;
 import com.liukun.teabaike.utils.ImageDownLoader;
 
 @SuppressLint("ValidFragment")
-public class ContentFragment extends BaseFragment implements AdvertCallBack,PullToRefreshBase.OnRefreshListener2<ListView>{
+public class ContentFragment extends BaseFragment implements AdvertCallBack, PullToRefreshBase.OnRefreshListener2<ListView> {
     private String url;
     private int flag;
     private String dataUrl = "";
     private String headUrl = "";
-    private List<Tea> tList;
+    //数据返回的集合，全部数据集合
+    private List<Tea> tList, dataList;
     private PullToRefreshListView fListView;
     //广告数据集合
     private List<Advert> adList;
@@ -60,8 +61,10 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
     private int count = 0;
     //广告文字内容
     private List<String> textList;
-    private int prePosition=0;
+    private int prePosition = 0;
     private ListView listView;
+    private int page=1;
+    private  ContentAdapter adapter=null;
 
     public ContentFragment() {
     }
@@ -86,17 +89,36 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
         fListView = (PullToRefreshListView) v.findViewById(R.id.fListView);
         fListView.setOnRefreshListener(ContentFragment.this);
         fListView.setMode(PullToRefreshBase.Mode.BOTH);
-        listView=fListView.getRefreshableView();
+        listView = fListView.getRefreshableView();
     }
 
     @Override
     protected void initData() {
+        dataList=new ArrayList<Tea>();
         getUrl();
         if (flag == 0) {
             listView.addHeaderView(getHeadView());
         }
         registerForContextMenu(listView);
-        new RequestAsyncTask(getActivity(), dataUrl, new AsyncTaskCallBack() {
+        initTeaData(-1,dataUrl);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent i = new Intent(getActivity(), TeaDetailsActivity.class);
+                Tea tea = (Tea) parent.getAdapter().getItem(position);
+                if (tea != null) {
+                    i.putExtra("id", tea.getId());
+                }
+                startActivity(i);
+            }
+        });
+    }
+
+    /**
+     * 加载数据，flag＝0:加在第一条，不设置默认加在最后
+     */
+    private void initTeaData(final int position, String teaUrl) {
+        new RequestAsyncTask(getActivity(), teaUrl, new AsyncTaskCallBack() {
 
             @Override
             public void post(String rest) {
@@ -109,7 +131,19 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
                         if ("success".equals(msg)) {
                             JSONArray array = obj.getJSONArray("data");
                             tList = com.alibaba.fastjson.JSONArray.parseArray(array.toString(), Tea.class);
-                            listView.setAdapter(new ContentAdapter(getActivity(), tList));
+                            if (0 == position) {
+                                dataList.addAll(0, tList);
+                                adapter.notifyDataSetChanged();
+                                fListView.onRefreshComplete();
+                            } else if (-1 == position) {
+                                dataList.addAll(tList);
+                                adapter=new ContentAdapter(getActivity(),dataList);
+                                listView.setAdapter(adapter);
+                            } else {
+                                dataList.addAll(tList);
+                                adapter.notifyDataSetChanged();
+                                fListView.onRefreshComplete();
+                            }
                         } else {
                             showToast("数据请求失败");
                         }
@@ -120,20 +154,6 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
 
             }
         }).execute();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent i=new Intent(getActivity(), TeaDetailsActivity.class);
-                Tea tea=new Tea();
-                tea=tList.get(position);
-                i.putExtra("id", tList.get(position).getId());
-                if (flag==0){
-                    tea = (Tea) parent.getAdapter().getItem(position);
-                }
-                i.putExtra("id",tea.getId());
-                startActivity(i);
-            }
-        });
     }
 
 
@@ -191,7 +211,7 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
                                 headList.add(image);
                                 textList.add(ad.getTitle());
                             }
-                            headVp.setAdapter(new GuideAdapter(headList,ContentFragment.this,1));
+                            headVp.setAdapter(new GuideAdapter(headList, ContentFragment.this, 1));
                         } else {
                             showToast("数据请求失败");
                         }
@@ -272,18 +292,20 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack,Pull
 
     @Override
     public void callBack(int position) {
-        Intent intent=new Intent(getActivity(),TeaDetailsActivity.class);
-        intent.putExtra("id",adList.get(position).getId());
+        Intent intent = new Intent(getActivity(), TeaDetailsActivity.class);
+        intent.putExtra("id", adList.get(position).getId());
         startActivity(intent);
     }
 
     @Override
     public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-
+        page++;
+        initTeaData(0,dataUrl+"&page="+page);
     }
 
     @Override
     public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-
+        page++;
+        initTeaData(1,dataUrl+"&page="+page);
     }
 }
