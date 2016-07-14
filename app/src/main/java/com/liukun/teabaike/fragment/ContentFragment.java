@@ -65,6 +65,8 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
     private ListView listView;
     private int page=1;
     private  ContentAdapter adapter=null;
+    private GuideAdapter headAdapter=null;
+    private View view;
 
     public ContentFragment() {
     }
@@ -94,12 +96,11 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
 
     @Override
     protected void initData() {
-        dataList=new ArrayList<Tea>();
         getUrl();
-        if (flag == 0) {
-            listView.addHeaderView(getHeadView());
-        }
-        registerForContextMenu(listView);
+        dataList=new ArrayList<Tea>();
+        adapter=new ContentAdapter(getActivity(),dataList);
+        listView.setAdapter(adapter);
+        initHeader();
         initTeaData(-1,dataUrl);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -118,6 +119,10 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
      * 加载数据，flag＝0:加在第一条，不设置默认加在最后
      */
     private void initTeaData(final int position, String teaUrl) {
+        if (flag == 0) {
+           getHeadView();
+        }
+        registerForContextMenu(listView);
         new RequestAsyncTask(getActivity(), teaUrl, new AsyncTaskCallBack() {
 
             @Override
@@ -133,17 +138,11 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
                             tList = com.alibaba.fastjson.JSONArray.parseArray(array.toString(), Tea.class);
                             if (0 == position) {
                                 dataList.addAll(0, tList);
-                                adapter.notifyDataSetChanged();
-                                fListView.onRefreshComplete();
-                            } else if (-1 == position) {
+                            }  else {
                                 dataList.addAll(tList);
-                                adapter=new ContentAdapter(getActivity(),dataList);
-                                listView.setAdapter(adapter);
-                            } else {
-                                dataList.addAll(tList);
-                                adapter.notifyDataSetChanged();
-                                fListView.onRefreshComplete();
                             }
+                            adapter.notifyDataSetChanged();
+                            fListView.onRefreshComplete();
                         } else {
                             showToast("数据请求失败");
                         }
@@ -155,22 +154,19 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
             }
         }).execute();
     }
-
-
-    /**
-     * 加载listview的headview
-     */
-    private View getHeadView() {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.head_view, null);
+    /**配置一些头视图信息*/
+    private void initHeader() {
+        headList = new ArrayList<View>();
+        headAdapter=new GuideAdapter(headList, ContentFragment.this, 1);
+        view = LayoutInflater.from(getActivity()).inflate(R.layout.head_view, null);
         headVp = (ViewPager) view.findViewById(R.id.headVp);
+        headVp.setAdapter(headAdapter);
         final TextView headTv = (TextView) view.findViewById(R.id.headTv);
         final LinearLayout headLinear = (LinearLayout) view.findViewById(R.id.headLinear);
         RelativeLayout headRelative = (RelativeLayout) view.findViewById(R.id.headRelative);
         headRelative.getBackground().setAlpha(100);
-        headList = new ArrayList<View>();
         textList = new ArrayList<String>();
         loader = TeaApplication.getApp().getLoaderInstance();
-
         for (int i = 0; i < 3; i++) {
             ImageView image = new ImageView(getActivity());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -182,45 +178,6 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
         }
         ImageView image = (ImageView) headLinear.getChildAt(0);
         image.setImageResource(R.drawable.page_now);
-
-        new RequestAsyncTask(getActivity(), headUrl, new AsyncTaskCallBack() {
-            @Override
-            public void post(String rest) {
-                if (TextUtils.isEmpty(rest)) {
-                    showToast("网络错误");
-                } else {
-                    try {
-                        JSONObject obj = new JSONObject(rest);
-                        String msg = obj.getString("errorMessage");
-                        if ("success".equals(msg)) {
-                            JSONArray array = obj.getJSONArray("data");
-                            adList = com.alibaba.fastjson.JSONArray.parseArray(array.toString(), Advert.class);
-                            for (Advert ad : adList) {
-                                String imageUrl = ad.getImage();
-                                ImageView image = (ImageView) LayoutInflater.from(getActivity()).inflate(R.layout.head_image, null);
-                                image.setTag(imageUrl);
-                                Bitmap bitmap = loader.downLoader(image, new ImageDownLoader.ImageLoaderlistener() {
-                                    @Override
-                                    public void onImageLoader(Bitmap bitmap, ImageView imageView) {
-                                        imageView.setImageBitmap(bitmap);
-                                    }
-                                });
-                                if (bitmap != null) {
-                                    image.setImageBitmap(bitmap);
-                                }
-                                headList.add(image);
-                                textList.add(ad.getTitle());
-                            }
-                            headVp.setAdapter(new GuideAdapter(headList, ContentFragment.this, 1));
-                        } else {
-                            showToast("数据请求失败");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).execute();
         headVp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -268,6 +225,60 @@ public class ContentFragment extends BaseFragment implements AdvertCallBack, Pul
         };
         Timer timer = new Timer();
         timer.schedule(task, 3000, 1500);
+
+        if (0==flag){
+            listView.addHeaderView(getHeadView());
+        }
+    }
+
+    /**
+     * 加载listview的headview
+     */
+    private View getHeadView() {
+        new RequestAsyncTask(getActivity(), headUrl, new AsyncTaskCallBack() {
+            @Override
+            public void post(String rest) {
+                if (TextUtils.isEmpty(rest)) {
+                    showToast("网络错误");
+                } else {
+                    try {
+                        JSONObject obj = new JSONObject(rest);
+                        String msg = obj.getString("errorMessage");
+                        if ("success".equals(msg)) {
+                            JSONArray array = obj.getJSONArray("data");
+                            adList = com.alibaba.fastjson.JSONArray.parseArray(array.toString(), Advert.class);
+                            List<View> vList=new ArrayList<View>();
+                            List<String> tList=new ArrayList<String>();
+                            for (Advert ad : adList) {
+                                String imageUrl = ad.getImage();
+                                ImageView image = (ImageView) LayoutInflater.from(getActivity()).inflate(R.layout.head_image, null);
+                                image.setTag(imageUrl);
+                                Bitmap bitmap = loader.downLoader(image, new ImageDownLoader.ImageLoaderlistener() {
+                                    @Override
+                                    public void onImageLoader(Bitmap bitmap, ImageView imageView) {
+                                        imageView.setImageBitmap(bitmap);
+                                    }
+                                });
+                                if (bitmap != null) {
+                                    image.setImageBitmap(bitmap);
+                                }
+                                vList.add(image);
+                                tList.add(ad.getTitle());
+                            }
+                            headList.clear();
+                            headList.addAll(vList);
+                            textList.clear();
+                            textList.addAll(tList);
+                            headAdapter.notifyDataSetChanged();
+                        } else {
+                            showToast("数据请求失败");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).execute();
         return view;
     }
 
