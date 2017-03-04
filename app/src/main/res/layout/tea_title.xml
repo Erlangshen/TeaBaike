@@ -18,28 +18,28 @@
             android:id="@+id/toutiao"
             style="@style/RadioButton"
             android:textColor="#3D9D01"
-            android:text="头条"
+            android:text="@string/toutiao"
             android:checked="false" />
 
         <RadioButton
             android:id="@+id/baike"
             style="@style/RadioButton"
-            android:text="百科" />
+            android:text="@string/baike" />
 
         <RadioButton
             android:id="@+id/zixun"
             style="@style/RadioButton"
-            android:text="资讯" />
+            android:text="@string/zixun" />
 
         <RadioButton
             android:id="@+id/jingying"
             style="@style/RadioButton"
-            android:text="经营" />
+            android:text="@string/jingying" />
 
         <RadioButton
             android:id="@+id/shuju"
             style="@style/RadioButton"
-            android:text="数据" />
+            android:text="@string/shuju" />
 
         <RadioButton
             android:id="@+id/more"

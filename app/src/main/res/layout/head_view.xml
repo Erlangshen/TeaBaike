@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF"
-            android:text="android1.3新版本简介"
+            android:text="@string/new_version_str"
             android:layout_centerVertical="true"/>
         <LinearLayout
             android:id="@+id/headLinear"

@@ -1,8 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">我爱坤哥</string>
+    <string name="app_name">茶百科</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="new_version_str">android1.3新版本简介</string>
+    <string name="tea_baike">茶百科</string>
+    <string name="key_word">关键字</string>
+    <string name="title">标题</string>
+    <string name="instruction">说明</string>
+    <string name="resource">来源</string>
+    <string name="author">作者</string>
+    <string name="date">日期</string>
+    <string name="toutiao">头条</string>
+    <string name="baike">百科</string>
+    <string name="zixun">资讯</string>
+    <string name="jingying">经营</string>
+    <string name="shuju">数据</string>
 
 </resources>

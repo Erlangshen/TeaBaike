@@ -1,10 +1,10 @@
 [
     {
-        "merged": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/res/merged/androidTest/debug/layout/pull_to_refresh_header_horizontal.xml",
-        "source": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/bundles/debug/res/layout/pull_to_refresh_header_horizontal.xml"
-    },
-    {
         "merged": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/res/merged/androidTest/debug/layout/pull_to_refresh_header_vertical.xml",
         "source": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/bundles/debug/res/layout/pull_to_refresh_header_vertical.xml"
+    },
+    {
+        "merged": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/res/merged/androidTest/debug/layout/pull_to_refresh_header_horizontal.xml",
+        "source": "/Users/liukun/Documents/androidworkspace/TeaBaike/library/build/intermediates/bundles/debug/res/layout/pull_to_refresh_header_horizontal.xml"
     }
 ]
